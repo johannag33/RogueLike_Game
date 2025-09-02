@@ -66,7 +66,7 @@ class ConfusedEnemy(BaseAI):
         # Revert the AI back to the original state if the effect has run its course.
         if self.turns_remaining <= 0:
             self.engine.message_log.add_message(
-                f"The {self.entity.name} is no longer confused."
+                f"{self.entity.name} n'est plus confus."
             )
             self.entity.ai = self.previous_ai
         else:
