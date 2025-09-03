@@ -48,7 +48,21 @@ def new_game() -> Engine:
     engine.message_log.add_message(
         "Bonjour et bienvenue, aventurier, dans un nouveau dongeon !", color.welcome_text
     )
+
+    dagger = copy.deepcopy(entity_factories.dagger)
+    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+
+    dagger.parent = player.inventory
+    leather_armor.parent = player.inventory
+
+    player.inventory.items.append(dagger)
+    player.equipment.toggle_equip(dagger, add_message=False)
+
+    player.inventory.items.append(leather_armor)
+    player.equipment.toggle_equip(leather_armor, add_message=False)
+
     return engine
+
 
 def load_game(filename: str) -> Engine:
     """Load an Engine instance from a file."""
@@ -81,7 +95,7 @@ class MainMenu(input_handlers.BaseEventHandler):
 
         menu_width = 24
         for i, text in enumerate(
-            ["[N] Nouvelle partie", "[C] Continue la partie précédente", "[Q] Quitter"]
+            ["[N] Nouvelle partie", "[C] Continue la partie precedente", "[Q] Quitter"]
         ):
             console.print(
                 console.width // 2,

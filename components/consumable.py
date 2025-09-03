@@ -46,7 +46,7 @@ class ConfusionConsumable(Consumable):
 
     def get_action(self, consumer: Actor) -> SingleRangedAttackHandler:
         self.engine.message_log.add_message(
-            "Select a target location.", color.needs_target
+            "Selectionnez la cible a viser.", color.needs_target
         )
         return SingleRangedAttackHandler(
             self.engine,
@@ -59,14 +59,14 @@ class ConfusionConsumable(Consumable):
         target = action.target_actor
 
         if not self.engine.game_map.visible[action.target_xy]:
-            raise Impossible("You cannot target an area that you cannot see.")
+            raise Impossible("Vous ne pouvez pas cibler un endroit hors du champ de vision.")
         if not target:
-            raise Impossible("You must select an enemy to target.")
+            raise Impossible("Vous devez selectionner un ennemi.")
         if target is consumer:
-            raise Impossible("You cannot confuse yourself!")
+            raise Impossible("Vous ne pouvez pas vous rendre vous-meme confus!")
 
         self.engine.message_log.add_message(
-            f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
+            f"Le regard du {target.name} devient vitreux, et il commence a trebucher!",
             color.status_effect_applied,
         )
         target.ai = components.ai.ConfusedEnemy(
@@ -83,12 +83,12 @@ class HealingConsumable(Consumable):
 
         if amount_recovered > 0:
             self.engine.message_log.add_message(
-                f"You consume the {self.parent.name}, and recover {amount_recovered} HP!",
+                f"Vous consommez le {self.parent.name}, et gagnez {amount_recovered} HP!",
                 color.health_recovered,
             )
             self.consume()
         else:
-            raise Impossible(f"Your health is already full.")
+            raise Impossible(f"Votre sante est deja au maximum.")
         
 
 class FireballDamageConsumable(Consumable):
@@ -98,7 +98,7 @@ class FireballDamageConsumable(Consumable):
 
     def get_action(self, consumer: Actor) -> AreaRangedAttackHandler:
         self.engine.message_log.add_message(
-            "Select a target location.", color.needs_target
+            "Selectionnez une cible.", color.needs_target
         )
         return AreaRangedAttackHandler(
             self.engine,
@@ -111,13 +111,13 @@ class FireballDamageConsumable(Consumable):
         target_xy = action.target_xy
 
         if not self.engine.game_map.visible[target_xy]:
-            raise Impossible("You cannot target an area that you cannot see.")
+            raise Impossible("Vous ne pouvez pas viser hors de votre champ de vision.")
 
         targets_hit = False
         for actor in self.engine.game_map.actors:
             if actor.distance(*target_xy) <= self.radius:
                 self.engine.message_log.add_message(
-                    f"The {actor.name} is engulfed in a fiery explosion, taking {self.damage} damage!"
+                    f"Le {actor.name} est pris dans une explosion, qui baisse sa vie de {self.damage} HP!"
                 )
                 actor.fighter.take_damage(self.damage)
                 targets_hit = True
@@ -146,10 +146,10 @@ class LightningDamageConsumable(Consumable):
 
         if target:
             self.engine.message_log.add_message(
-                f"A lighting bolt strikes the {target.name} with a loud thunder, for {self.damage} damage!"
+                f"Un eclair foudroie {target.name} dans un grand tonnerre, pour {self.damage} HP!"
             )
             target.fighter.take_damage(self.damage)
             self.consume()
         else:
-            raise Impossible("No enemy is close enough to strike.")
+            raise Impossible("Pas d'ennemi proche a cibler.")
         
